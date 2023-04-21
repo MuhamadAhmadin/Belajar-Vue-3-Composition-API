@@ -32,7 +32,7 @@
                                                 :to="{ name: 'transaction.edit', params: { id: transaction.id } }"
                                                 class="btn btn-primary btn-sm rounded shadow me-1"
                                             >Edit</router-link>
-                                            <button class="btn btn-danger btn-sm rounded shadow">Delete</button>
+                                            <button @click="destroy(transaction.id, index)" class="btn btn-danger btn-sm rounded shadow">Delete</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -51,7 +51,7 @@ import { onMounted, ref } from 'vue';
 
 export default {
     setup() {
-        const transactions = ref([]);
+        const transactions = ref([])
 
         onMounted(async () => {
             let response = await axios.get('http://vuecompovel.test/api/transaction')
@@ -61,10 +61,21 @@ export default {
                             .catch((err) => {
                                 console.log("error: " + err);
                             });
-        });
+        })
+
+        function destroy(id, index) {
+            axios.delete(`http://vuecompovel.test/api/transaction/${id}`)
+                .then((res) => {
+                    transactions.value.splice(index, 1)
+                })
+                .catch((err) => {
+                    console.log("error: " + err);
+                });
+        }
 
         return {
-            transactions
+            transactions,
+            destroy
         }
     }    
 }
